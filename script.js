@@ -39,9 +39,10 @@ window.addEventListener('resize',resizeDisplayText);
 // digits[0].textContent='.';
 const keypad = document.querySelector('#keypad');
 
-function createKey(){
+function createKey(tag){
     const key = document.createElement('div');
     key.classList.add('key');
+    key.innerHTML=tag;
     return key;
 }
 function createKeyRow(){
@@ -50,11 +51,19 @@ function createKeyRow(){
     return row;
 }
 
+const keyTags = [
+    ["\u21E7","M","AC","C","\u232B"],      // Shift symbol, Backspace symbol 
+    ["1","2","3","\u00B1","\u0025"],      // Plus-minus, Percent
+    ["4","5","6","\xB2","\u221A"],         // x squared, Square root
+    ["7","8","9","\xD7","\xF7"],           // Multiplication, Division
+    ["0","\u22C5","\u003D","\u002B","\u2212"] //Dot, Equals, Plus, Minus
+];
+
 //Populate keypad
 for(let i=0; i < 5; i++){
     const keyRow = createKeyRow();
     for(let j=0; j < 5; j++){
-        const key = createKey();
+        const key = createKey(keyTags[i][j]);
         keyRow.appendChild(key);
     }
     keypad.appendChild(keyRow);

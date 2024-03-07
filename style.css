@@ -177,15 +177,19 @@ body{
 .key-row{
     flex:1;
     display: flex;
+    justify-content: space-around;
 }
 .key{
     flex:1;
     border-radius: 25%;
     background-color: rgb(100,100,100);
     color: rgb(200,200,200);
-    text-align: center;
     margin: 1%;
     border: 5px solid rgb(25,25,25);
+    font-family: 'Michroma', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 /* #results{
     display: flex;
