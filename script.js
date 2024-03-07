@@ -43,6 +43,7 @@ function createKey(tag){
     const key = document.createElement('div');
     key.classList.add('key');
     key.innerHTML=tag;
+    key.id = symbolMap[tag] || tag;
     return key;
 }
 function createKeyRow(){
@@ -58,6 +59,19 @@ const keyTags = [
     ["7","8","9","\xD7","\xF7"],           // Multiplication, Division
     ["0","\u22C5","\u003D","\u002B","\u2212"] //Dot, Equals, Plus, Minus
 ];
+
+const symbolMap = {
+    "\u21E7": "shift",
+    "\u232B": "backspace",
+    "\u00B1": "p-m",
+    "\u0025": "percent",
+    "\xB2": "squared",
+    "\xF7": "sqrt",
+    "\u22C5": "dot",
+    "\u003D": "equals",
+    "\u002B": "plus",
+    "\u2212": "minus"
+};
 
 //Populate keypad
 for(let i=0; i < 5; i++){
