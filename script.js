@@ -36,6 +36,26 @@ function resizeDisplayText(){
 resizeDisplayText();
 
 window.addEventListener('resize',resizeDisplayText);
+// digits[0].textContent='.';
+const keypad = document.querySelector('#keypad');
 
+function createKey(){
+    const key = document.createElement('div');
+    key.classList.add('key');
+    return key;
+}
+function createKeyRow(){
+    const row = document.createElement('div');
+    row.classList.add('key-row');
+    return row;
+}
 
-digits[0].textContent='.';
+//Populate keypad
+for(let i=0; i < 5; i++){
+    const keyRow = createKeyRow();
+    for(let j=0; j < 5; j++){
+        const key = createKey();
+        keyRow.appendChild(key);
+    }
+    keypad.appendChild(keyRow);
+}

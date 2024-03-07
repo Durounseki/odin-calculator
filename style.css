@@ -45,6 +45,7 @@ body{
     background-color: rgb(50,50,50);
     border-radius: 10px;
 }
+
 #top-panel{
     display: flex;
     height: 5vmin;
@@ -53,8 +54,8 @@ body{
     align-items: center;
 }
 #info{
-    width: 100%;
-    padding: 1vmin 2vmin;
+    width: 96%;
+    padding: 2% 4%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -80,9 +81,10 @@ body{
     display: flex;
     background-color: rgb(25,25,25);
     border-radius: 5px;
-    margin: 0 2vmin;
-    padding: 1vmin;
+    margin: 0 4%;
+    /* padding: 1vmin; */
     height: 15vmin;
+    min-height: 75px;
     justify-content: center;
     align-items: center;
 }
@@ -121,6 +123,7 @@ body{
     display: flex;
     border-radius: 2px;
     margin-left: 1%;
+    justify-content: flex-end;
 }
 
 #numbers-display{
@@ -149,7 +152,53 @@ body{
     overflow: hidden;
     flex: 1;
     display: flex;
+    justify-content: flex-end;
     border-radius: 2px;
     top: 100;
+    line-height: 125%;
 }
+
+#keypad-container{
+    display: flex;
+    height: 50vmin;
+    min-height: 250px;
+    align-items: center;
+    justify-content: center;
+}
+#keypad{
+    margin: 2% 4%;
+    height: 96%;
+    width: 92%;
+    display: flex;
+    /* background: gray; */
+    flex-direction: column;
+    justify-content: space-around;
+}
+.key-row{
+    flex:1;
+    display: flex;
+}
+.key{
+    flex:1;
+    border-radius: 25%;
+    background-color: rgb(100,100,100);
+    color: rgb(200,200,200);
+    text-align: center;
+    margin: 1%;
+    border: 5px solid rgb(25,25,25);
+}
+/* #results{
+    display: flex;
+    flex: 1;
+}
+#operators{
+    display: flex;
+    flex-direction: column;
+}
+.result, .operator, .num-key{
+    flex: 1;
+    background-color: rgb(100,100,100);
+    color: rgb(200,200,200);
+    border-radius: 50%;
+} */
 
