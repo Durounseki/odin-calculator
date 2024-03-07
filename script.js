@@ -100,9 +100,10 @@ function addDigit(event){
     //Event triggered by a keypress or a click on keypad key
     event.key ? key = event.key : key = event.target.textContent;
     console.log(key);
+    //Only numbers and '.' trigger the event
     if((/[0-9]/.test(key))){
         display += key;
-    }if((/\./.test(key) || key === "\u22C5") && (display.indexOf('.') === -1)){
+    }if((/\./.test(key) || key === "\u22C5") && (display.indexOf('.') === -1)){ //Only append one point
         display += '.'
     }
     console.log(display)
@@ -112,3 +113,16 @@ document.addEventListener('keyup',addDigit);
 
 const numKeys = document.querySelectorAll(".num-key");
 numKeys.forEach(digit => digit.addEventListener('click',addDigit));
+
+function deleteDigit(event){
+    //Event triggered by a keypress or a click on keypad key
+    event.key ? key = event.key : key = event.target.textContent;
+    if(key === 'Backspace' || key === "\u232B"){
+        display = display.slice(0, -1);
+    }
+    console.log(display);
+}
+
+document.addEventListener('keyup',deleteDigit);
+const deleteKey = document.querySelector('#backspace');
+deleteKey.addEventListener('click',deleteDigit);
