@@ -5,6 +5,27 @@
     font-style: normal;
 }
 
+@font-face{
+    font-family: 'LCD';
+    src: url('fonts/lcd-cufonfonts-webfont/LCD-BOLD.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face{
+    font-family: 'LCDM';
+    src: url('fonts/lcd-cufonfonts-webfont/LCDMB___.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face{
+    font-family: 'LCDM';
+    src: url('fonts/lcd-cufonfonts-webfont/LCDMN___.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body{
     margin: 0;
     padding: 0;
@@ -77,22 +98,58 @@ body{
     flex-direction: column;
 }
 
-#mode{
+#mode-display{
     display: flex;
-    height: 30%;
+    height: 26%;
     margin: 2% 2%;
-    background-color: grey;
+    background-color: rgb(25,25,25);
     border-radius: 2px;
+    /* box-sizing: border-box; */
+    padding: 1%;
 }
 
-#numbers{
+#mode{
+    font-family: 'LCDM', sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    color: rgb(51,255,51);
+    height: 90%;
+    background-color: black;
+    text-align: center;
+    overflow: hidden;
+    flex: 1;
     display: flex;
-    justify-content: space-between;
+    border-radius: 2px;
+    margin-left: 1%;
+}
+
+#numbers-display{
+    display: flex;
+    /* justify-content: space-between; */
+    gap: 1%;
     align-items: center;
-    height: 70%;
+    height: 64%;
     margin: 0% 2%;
     margin-bottom: 2%;
     border-radius: 2px;
-    background-color: darkgray;
+    background-color: rgb(25,25,25);
+    /* box-sizing: border-box; */
+    padding: 1%;
+    /* flex: 1; */
+}
+
+.lcd{
+    font-family: 'LCDM', sans-serif;
+    font-weight: bold;
+    font-style: normal;
+    color: rgb(51,255,51);
+    height: 90%;
+    background-color: black;
+    text-align: right;
+    overflow: hidden;
+    flex: 1;
+    display: flex;
+    border-radius: 2px;
+    top: 100;
 }
 
