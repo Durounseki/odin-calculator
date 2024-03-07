@@ -14,7 +14,6 @@ function createLCD(digit) {
 for (let i = 0; i < numDigits; i++) {
   const lcdDiv = createLCD('$');
   numbersDisplay.appendChild(lcdDiv);
-  lcdDiv.style.color = "rgb(5,25,5)"
 }
 
 //Responsive resizing of lcd text
@@ -62,7 +61,7 @@ function createKeyRow(){
 }
 
 const keyTags = [
-    ["\u2190","\u2192","M","AC","\u232B"],      // Left triangle, Right triangle, Backspace symbol 
+    ["M\u002B","MR","MC","AC","\u232B"],      // M+, Backspace symbol 
     ["1","2","3","\u00B1","\u0025"],      // Plus-minus, Percent
     ["4","5","6","x\xB2","\u221A"],         // x squared, Square root
     ["7","8","9","\xD7","\xF7"],           // Multiplication, Division
@@ -70,9 +69,10 @@ const keyTags = [
 ];
 
 const symbolMap = {
-    // "\u21E7": "shift",
+    "\u21E7": "shift", //For later use ins scientific calculator
     "\u2190": "left",
     "\u2192": "right",
+    "M\u002B": "Mplus",
     "\u232B": "backspace",
     "\u00B1": "p-m",
     "\u0025": "percent",
@@ -99,21 +99,25 @@ for(let i=0; i < 5; i++){
 
 let display = {
     digits:"",
+    temp: 0,
+    memory: 0,
     position: 0
 };
 
 function addDigit(event){
     //Event triggered by a keypress or a click on keypad key
     event.key ? key = event.key : key = event.target.textContent;
-    console.log(key);
     //Only numbers and '.' trigger the event
-    if((/[0-9]/.test(key))){
+    if((/[0-9]/.test(key)) && display.digits.length < numDigits){
         display.digits += key;
     }if((/\./.test(key) || key === "\u22C5") && (display.digits.indexOf('.') === -1)){ //Only append one point
-        display.digits += '.'
+        if(display.digits.length < numDigits){
+            display.digits += '.';
+        }if(display.digits.length === 0 ){
+            display.digits += '0.';
+        }
     }
-    console.log(display)
-    modifyDisplay();
+    showDigits();
 }
 
 document.addEventListener('keyup',addDigit);
@@ -126,23 +130,20 @@ function deleteDigit(event){
     event.key ? key = event.key : key = event.target.textContent;
     if(key === 'Backspace' || key === "\u232B"){
         display.digits = display.digits.slice(0, -1);
+        if(display.digits.length > 8){
+        }
     }
     console.log(display);
-    modifyDisplay();
+    showDigits();
 }
 
 document.addEventListener('keyup',deleteDigit);
 const deleteKey = document.querySelector('#backspace');
 deleteKey.addEventListener('click',deleteDigit);
 
-function modifyDisplay(){
-    showDigits();
-}
-
 function showDigits(){
     for(let i=1; i <= numDigits; i++){
         let digit = display.digits.charAt(display.digits.length-i-display.position);
-        console.log(digit);
         let LCDdigit = LCDdigits[numDigits-i];
         if(digit){
             LCDdigit.textContent = digit;
@@ -152,4 +153,18 @@ function showDigits(){
             LCDdigit.style.color = "rgb(5,25,5)"
         }
     }
+}
+
+//For later use in scientific calculator
+function movePosition(event){
+    event.key ? key = event.key : key = event.target.textContent;
+    console.log(key);
+    if(key === "ArrowLeft" || key === "\u2190"){
+        console.log("here")
+        display.position = Math.min(display.position+1, display.digits.length-numDigits);
+    }if(key === "ArrowRight" || key === "\u2192"){
+        display.position = Math.max(0,display.position - 1);
+    }
+    console.log("position: "+display.position);
+    showDigits();
 }

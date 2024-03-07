@@ -191,18 +191,4 @@ body{
     align-items: center;
     justify-content: center;
 }
-/* #results{
-    display: flex;
-    flex: 1;
-}
-#operators{
-    display: flex;
-    flex-direction: column;
-}
-.result, .operator, .num-key{
-    flex: 1;
-    background-color: rgb(100,100,100);
-    color: rgb(200,200,200);
-    border-radius: 50%;
-} */
 
