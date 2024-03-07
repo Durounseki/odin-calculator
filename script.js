@@ -1,3 +1,4 @@
+//Emulate old lcd display
 const numbersDisplay = document.querySelector('#numbers-display');
 const numDigits = 8; // Number of digits to display
 
@@ -15,6 +16,7 @@ for (let i = 0; i < numDigits; i++) {
   numbersDisplay.appendChild(lcdDiv);
 }
 
+//Responsive resizing of lcd text
 const digits = document.querySelectorAll(".lcd");
 
 function resizeDigits(){
@@ -33,19 +35,25 @@ function resizeDisplayText(){
     resizeDigits();
     resizeMode();
 }
-resizeDisplayText();
 
+resizeDisplayText();
 window.addEventListener('resize',resizeDisplayText);
-// digits[0].textContent='.';
+
+//Build the keypad
+
 const keypad = document.querySelector('#keypad');
 
 function createKey(tag){
     const key = document.createElement('div');
     key.classList.add('key');
     key.innerHTML=tag;
-    key.id = symbolMap[tag] || tag;
+    key.id = symbolMap[tag] || tag; //Parse unicode to a string
+    if(/[0-9]/.test(key.id) || key.id === 'dot'){
+        key.classList.add('num-key');
+    }
     return key;
 }
+
 function createKeyRow(){
     const row = document.createElement('div');
     row.classList.add('key-row');
@@ -55,7 +63,7 @@ function createKeyRow(){
 const keyTags = [
     ["\u21E7","M","AC","C","\u232B"],      // Shift symbol, Backspace symbol 
     ["1","2","3","\u00B1","\u0025"],      // Plus-minus, Percent
-    ["4","5","6","\xB2","\u221A"],         // x squared, Square root
+    ["4","5","6","x\xB2","\u221A"],         // x squared, Square root
     ["7","8","9","\xD7","\xF7"],           // Multiplication, Division
     ["0","\u22C5","\u003D","\u002B","\u2212"] //Dot, Equals, Plus, Minus
 ];
@@ -82,3 +90,25 @@ for(let i=0; i < 5; i++){
     }
     keypad.appendChild(keyRow);
 }
+
+
+//Display numbers
+
+let display = "";
+
+function addDigit(event){
+    //Event triggered by a keypress or a click on keypad key
+    event.key ? key = event.key : key = event.target.textContent;
+    console.log(key);
+    if((/[0-9]/.test(key))){
+        display += key;
+    }if((/\./.test(key) || key === "\u22C5") && (display.indexOf('.') === -1)){
+        display += '.'
+    }
+    console.log(display)
+}
+
+document.addEventListener('keyup',addDigit);
+
+const numKeys = document.querySelectorAll(".num-key");
+numKeys.forEach(digit => digit.addEventListener('click',addDigit));
