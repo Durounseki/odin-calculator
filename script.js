@@ -1,6 +1,7 @@
 //Emulate old lcd display
 const numbersDisplay = document.querySelector('#numbers-display');
 const numDigits = 8; // Number of digits to display
+const mode = document.querySelector("#mode");
 
 function createLCD(digit) {
   const lcdDiv = document.createElement('div');
@@ -15,29 +16,6 @@ for (let i = 0; i < numDigits; i++) {
   const lcdDiv = createLCD('$');
   numbersDisplay.appendChild(lcdDiv);
 }
-
-//Responsive resizing of lcd text
-const LCDdigits = document.querySelectorAll(".lcd");
-
-function resizeDigits(){
-    LCDdigits.forEach( div =>{
-        div.style.fontSize = div.clientHeight*0.9 + 'px';
-    });
-}
-
-const mode = document.querySelector("#mode");
-
-function resizeMode(){
-    mode.style.fontSize = mode.clientHeight*0.9 + 'px';
-}
-
-function resizeDisplayText(){
-    resizeDigits();
-    resizeMode();
-}
-
-resizeDisplayText();
-window.addEventListener('resize',resizeDisplayText);
 
 //Build the keypad
 
@@ -94,11 +72,41 @@ for(let i=0; i < 5; i++){
     keypad.appendChild(keyRow);
 }
 
+const memKeys = keypad.children[0].querySelectorAll(":nth-child(-n+4)")
+
+//Responsive resizing of text
+const LCDdigits = document.querySelectorAll(".lcd");
+
+function resizeDigits(){
+    LCDdigits.forEach( div =>{
+        div.style.fontSize = div.clientHeight*0.9 + 'px';
+    });
+}
+
+function resizeMode(){
+    mode.style.fontSize = mode.clientHeight*0.9 + 'px';
+}
+
+function resizeKeyTags(){
+    memKeys.forEach(key => {
+        key.style.fontSize = key.clientHeight*0.35 + 'px';
+    });
+}
+
+function resizeDisplayText(){
+    resizeDigits();
+    resizeMode();
+    resizeKeyTags();
+}
+
+resizeDisplayText();
+window.addEventListener('resize',resizeDisplayText);
+
 
 //Display numbers
 
 let display = {
-    digits:"",
+    digits: "",
     temp: 0,
     memory: 0,
     position: 0
