@@ -179,10 +179,14 @@ ACKey.addEventListener('click',deleteDigit);
 
 function showDigits(){
     let integerPart = display.digits.slice(0,display.digits.indexOf('.'));
-    if(display.digits.length > numDigits){
+    if(display.digits.length > numDigits){//Check for long expressions
         if(+display.digits < maxDisplayDigits){
             //Round and truncate to 8 digits
-            display.digits=(+display.digits).toFixed(numDigits-integerPart.length-1)
+            display.digits=(+display.digits).toFixed(numDigits-integerPart.length-1);
+            //Remove trailing 0's after the decimal point
+            while(display.digits.charAt(display.digits.length-1)==='0'){
+                display.digits = display.digits.slice(0, -1);
+            }
         }else{
             display.digits = 'ERROR';
         }
