@@ -29,6 +29,9 @@ function createKey(tag){
     if(/[0-9]/.test(key.id) || key.id === 'dot'){
         key.classList.add('num-key');
     }
+    if(operatorsIds.includes(key.id)){
+        key.classList.add('operator-key');
+    }
     return key;
 }
 
@@ -54,13 +57,17 @@ const symbolMap = {
     "\u232B": "backspace",
     "\u00B1": "p-m",
     "\u0025": "percent",
-    "\xB2": "squared",
-    "\xF7": "sqrt",
+    "x\xB2": "squared",
+    "\u221A": "sqrt",
+    "\xD7": "multiply",
+    "\xF7": "divide",
     "\u22C5": "dot",
     "\u003D": "equals",
     "\u002B": "plus",
     "\u2212": "minus"
 };
+
+const operatorsIds = ["p-m","percent","squared","sqrt","multiply","divide","plus","minus"];
 
 //Populate keypad
 for(let i=0; i < 5; i++){
@@ -107,22 +114,36 @@ window.addEventListener('resize',resizeDisplayText);
 
 let display = {
     digits: "",
-    temp: 0,
-    memory: 0,
+    temp: "",
+    operation: undefined,
+    memory: "",
+    clear: false,
     position: 0
 };
 
 function addDigit(event){
     //Event triggered by a keypress or a click on keypad key
     event.key ? key = event.key : key = event.target.textContent;
+    // console.log(key);
     //Only numbers and '.' trigger the event
     if((/[0-9]/.test(key)) && display.digits.length < numDigits){
-        display.digits += key;
+        if(display.digits.length === 0 && key === '0'){
+            display.digits += "";
+        }else{
+            if(display.clear){ //The clear property is true when an operation starts
+                display.digits = key;
+                display.clear = false;
+            }else{
+                display.digits += key;
+            }
+        }
     }if((/\./.test(key) || key === "\u22C5") && (display.digits.indexOf('.') === -1)){ //Only append one point
         if(display.digits.length < numDigits){
-            display.digits += '.';
-        }if(display.digits.length === 0 ){
-            display.digits += '0.';
+            if(display.clear){
+                display.digits += '0.'
+            }else{
+                display.digits.length === 0 ? display.digits += '0.' : display.digits += '.';
+            }
         }
     }
     showDigits();
@@ -141,6 +162,12 @@ function deleteDigit(event){
         if(display.digits.length > 8){
         }
     }
+    if(key === 'AC'){
+        display.digits = "";
+        display.temp = "";
+        display.operation = undefined;
+        display.clear = false;
+    }
     console.log(display);
     showDigits();
 }
@@ -148,6 +175,8 @@ function deleteDigit(event){
 document.addEventListener('keyup',deleteDigit);
 const deleteKey = document.querySelector('#backspace');
 deleteKey.addEventListener('click',deleteDigit);
+const ACKey = document.querySelector('#AC');
+ACKey.addEventListener('click',deleteDigit);
 
 function showDigits(){
     for(let i=1; i <= numDigits; i++){
@@ -162,6 +191,112 @@ function showDigits(){
         }
     }
 }
+
+//Operations
+
+function add(num1,num2){
+    return num1+num2;
+}
+
+function subtract(num1,num2){
+    return num1-num2;
+}
+
+function multiply(num1,num2){
+    return num1*num2;
+}
+
+function divide(num1,num2){
+    if(num2 === 0){
+        return 'ERROR';
+    }
+    return num1/num2;
+}
+
+function square(num){
+    return power(num,2);
+}
+
+function sqrt(num){
+    if(num < 0){
+        return "ERROR"
+    }
+    return Math.sqrt(num);
+}
+
+function equals(num1,num2,operation){
+    return operation(num1,num2);
+}
+
+function plusMinus(num){
+    return -num;
+}
+
+function percent(num1,num2=undefined){
+    if(num2){
+        return num1*num2/100;
+    }else{
+        return num1/100;
+    }
+}
+
+const operations = {
+    "x\xB2": square,
+    "s": square,
+    "\u221A": sqrt,
+    "r": sqrt,
+    "\u002B": add,
+    "+": add,
+    "\u2212": subtract,
+    "-": subtract,
+    "\xD7": multiply,
+    "*": multiply,
+    "\xF7": divide,
+    "/": divide,
+    "\u003D": equals,
+    "=": equals,
+    "\u00B1": plusMinus,
+    "±": plusMinus,
+    "\u0025": percent,
+    "%": percent
+}
+
+const instantOperation = [square,sqrt,percent,plusMinus];
+
+
+function operate(event){
+    event.key ? key = event.key : key = event.target.textContent;
+    let operation = operations[key];
+    console.log("key: "+key+" operation: "+ operation);
+    if(operation){
+        if(display.operation){
+            display.digits = `${display.operation(+display.temp,+display.digits)}`;
+            if(operation === equals){
+                display.operation = undefined;
+                display.temp = "";
+            }else{
+                display.operation = operation;
+                display.temp = display.digits;
+            }
+        }else{
+            display.temp = display.digits;
+            display.operation = operation;
+        }
+        display.clear = true;
+    }
+    console.log(display);
+    showDigits();
+}
+
+// function equals(event){
+//     event.key ? key = event.key : key = event.target.textContent;
+//     if(key )
+// }
+document.addEventListener('keyup',operate);
+const operators = document.querySelectorAll(".operator-key");
+operators.forEach(key => key.addEventListener('click',operate));
+equalsKey=document.querySelector('#equals');
+equalsKey.addEventListener('click',operate);
 
 //For later use in scientific calculator
 function movePosition(event){
