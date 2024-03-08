@@ -1,6 +1,7 @@
 //Emulate old lcd display
 const numbersDisplay = document.querySelector('#numbers-display');
 const numDigits = 8; // Number of digits to display
+const maxDisplayDigits = "9".repeat(numDigits); //Maximum number to store in memory.
 const mode = document.querySelector("#mode");
 
 function createLCD(digit) {
@@ -124,26 +125,24 @@ let display = {
 function addDigit(event){
     //Event triggered by a keypress or a click on keypad key
     event.key ? key = event.key : key = event.target.textContent;
-    // console.log(key);
     //Only numbers and '.' trigger the event
-    if((/[0-9]/.test(key)) && display.digits.length < numDigits){
-        if(display.digits.length === 0 && key === '0'){
+    if(/[0-9]/.test(key)){//It's a number key
+        if(display.clear){//If an operation result has been displayed
+            display.digits = "";//Clear the display
+            display.clear=false;
+        }
+        if(display.digits.length === 0 && key === '0'){//If no operation has been done but display is empty
             display.digits += "";
         }else{
-            if(display.clear){ //The clear property is true when an operation starts
-                display.digits = key;
-                display.clear = false;
-            }else{
-                display.digits += key;
-            }
+            display.digits += key;
         }
     }if((/\./.test(key) || key === "\u22C5") && (display.digits.indexOf('.') === -1)){ //Only append one point
+        if(display.clear){//If an operation result has been displayed
+            display.digits = "";//Clear the display
+            display.clear=false;
+        }
         if(display.digits.length < numDigits){
-            if(display.clear){
-                display.digits += '0.'
-            }else{
-                display.digits.length === 0 ? display.digits += '0.' : display.digits += '.';
-            }
+            display.digits.length === 0 ? display.digits += '0.' : display.digits += '.';
         }
     }
     showDigits();
@@ -179,6 +178,15 @@ const ACKey = document.querySelector('#AC');
 ACKey.addEventListener('click',deleteDigit);
 
 function showDigits(){
+    let integerPart = display.digits.slice(0,display.digits.indexOf('.'));
+    if(display.digits.length > numDigits){
+        if(+display.digits < maxDisplayDigits){
+            //Round and truncate to 8 digits
+            display.digits=(+display.digits).toFixed(numDigits-integerPart.length-1)
+        }else{
+            display.digits = 'ERROR';
+        }
+    } 
     for(let i=1; i <= numDigits; i++){
         let digit = display.digits.charAt(display.digits.length-i-display.position);
         let LCDdigit = LCDdigits[numDigits-i];
@@ -214,7 +222,7 @@ function divide(num1,num2){
 }
 
 function square(num){
-    return power(num,2);
+    return num**2;
 }
 
 function sqrt(num){
