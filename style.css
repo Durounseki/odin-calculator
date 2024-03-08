@@ -33,6 +33,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: rgb(25,25,25);
 }
 
 #calculator{
@@ -44,6 +45,7 @@ body{
     min-height: 350px;
     background-color: rgb(50,50,50);
     border-radius: 10px;
+    border: 1vmin solid black;
 }
 
 #top-panel{

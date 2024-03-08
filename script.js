@@ -115,6 +115,7 @@ window.addEventListener('resize',resizeDisplayText);
 
 let display = {
     digits: "",
+    current: "",
     temp: "",
     binaryOperation: undefined,
     unaryOperation: equals,
@@ -128,23 +129,17 @@ function addDigit(event){
     event.key ? key = event.key : key = event.target.textContent;
     //Only numbers and '.' trigger the event
     if(/[0-9]/.test(key)){//It's a number key
-        if(display.clear){//If an operation result has been displayed
-            display.digits = "";//Clear the display
-            display.clear=false;
-        }
-        if(display.digits.length === 0 && key === '0'){//If no operation has been done but display is empty
-            display.digits += "";
+        if((display.current.length === 0) && key=='0'){
+            display.current += "";
+            //If no current input do not erase display, this allows the user to input 0.
+            //whenever they try to input a float with integer part 0
         }else{
-            display.digits += key;
+            display.current += key;
+            display.digits = display.current;
         }
-    }if((/\./.test(key) || key === "\u22C5") && (display.digits.indexOf('.') === -1)){ //Only append one point
-        if(display.clear){//If an operation result has been displayed
-            display.digits = "";//Clear the display
-            display.clear=false;
-        }
-        if(display.digits.length < numDigits){
-            display.digits.length === 0 ? display.digits += '0.' : display.digits += '.';
-        }
+    }if((/\./.test(key) || key === "\u22C5") && (display.current.indexOf('.') === -1)){ //Only append one point
+        display.current.length === 0 ? display.current += '0.' : display.current += '.';
+        display.digits=display.current;
     }
     showDigits();
 }
@@ -164,9 +159,7 @@ function deleteDigit(event){
     }
     if(key === 'AC'){
         display.digits = "";
-        display.temp = "";
-        display.binaryOperation = undefined;
-        display.clear = false;
+        resetDisplay();
     }
     console.log(display);
     showDigits();
@@ -188,8 +181,13 @@ function showDigits(){
             while(display.digits.charAt(display.digits.length-1)==='0'){
                 display.digits = display.digits.slice(0, -1);
             }
+            //Remove trailing dot for integers
+            if(display.digits.charAt(display.digits.length-1)==='.'){
+                display.digits = display.digits.slice(0, -1);
+            }
         }else{
             display.digits = 'ERROR';
+            resetDisplay();
         }
     } 
     for(let i=1; i <= numDigits; i++){
@@ -205,8 +203,15 @@ function showDigits(){
     }
 }
 
-//Operations
+function resetDisplay(){
+    display.current= "";
+    display.temp= "";
+    display.binaryOperation= undefined;
+    display.unaryOperation= equals;
+}
 
+//Operations
+//Binary
 function add(num1,num2){
     return num1+num2;
 }
@@ -225,11 +230,17 @@ function divide(num1,num2){
     }
     return num1/num2;
 }
-
+//Unary
+//Postfixing
 function square(num){
     return num**2;
 }
 
+function percent(num){
+    return num/100;
+}
+
+//Prefixing
 function sqrt(num){
     if(num < 0){
         return "ERROR"
@@ -237,20 +248,13 @@ function sqrt(num){
     return Math.sqrt(num);
 }
 
-function equals(num1){
-    return num1;
-}
-
 function plusMinus(num){
     return -num;
 }
 
-function percent(num1,num2=undefined){
-    if(num2){
-        return num1*num2/100;
-    }else{
-        return num1/100;
-    }
+//Equals
+function equals(num1){
+    return num1;
 }
 
 const operations = {
@@ -276,53 +280,119 @@ const operations = {
 
 const unaryOperations = [square,sqrt,percent,plusMinus];
 const binaryOperations = [add,subtract,multiply,divide];
-
+const prefixingOperations = [sqrt,plusMinus];
+const postfixingOperations = [square,percent];
 
 function operate(event){
     event.key ? key = event.key : key = event.target.textContent;
     let operation = operations[key];
     console.log("key: "+key+" operation: "+ operation);
-    if(binaryOperations.includes(operation)){
-        if(display.binaryOperation){
-            display.digits = `${display.binaryOperation(+display.temp,display.unaryOperation(+display.digits))}`;   
-        }
-        display.binaryOperation = operation;
-        display.unaryOperation = equals;
-        display.temp = display.digits;
-        display.clear = true;
-    }if(unaryOperations.includes(operation)){
-        if(display.binaryOperation || display.digits.length === 0){
-            if(display.unaryOperation === equals){
-                display.unaryOperation = operation;
-            }else{
-                display.digits = 'ERROR';
-                display.binaryOperation = undefined;
-                display.unaryOperation = equals;
-                display.temp = "";
-                display.clear = true;
+    //Check typeOf operation
+    //B: binary
+    //U: unary, post or prefixing
+    //P: postfixing
+    //p: prefixing
+    //E: equals
+    //T: temp
+    //C: current
+    //D: display
+
+    if(unaryOperations.includes(operation)){
+        //C+U evaluates to U(C) -> D
+        if(!display.binaryOperation){//If no binary operator, check for input and evaluate
+            //Only evaluate if there is an input
+            if(display.digits.length > 0){
+                display.digits = `${operation(+display.digits)}`;//current could be empty
+                resetDisplay();
             }
+            // else{
+            //     display.digits = `${operation(+display.digits)}`;
+            //     resetDisplay();
+            // }
+        }else{//If there is a binary operation
+            if(postfixingOperations.includes(operation)){
+                //T+B+C+P evaluates to T+B+P(C) -> T+B+D
+                if(display.current.length > 0){
+                    display.digits = `${operation(+display.current)}`;
+                    display.current = '';
+                }else{//T+B+P returns an error
+                    display.digits = 'ERROR';
+                    resetDisplay();
+                }
+            }
+            if(prefixingOperations.includes(operation)){
+                //T+B+C+p returns an error
+                if(display.current.length > 0){
+                    display.digits = 'ERROR';
+                    resetDisplay();
+                }else{
+                    //T+B+p looks for the next input
+                    if(display.unaryOperation === equals){
+                        display.unaryOperation = operation;
+                    }else{  //T+B+p+p returns an error
+                        display.digits = 'ERROR';
+                        resetDisplay();
+                    }
+                }
+            }
+        }
+    }
+    if(binaryOperations.includes(operation)){//If it is a binary operation
+        //C+B -> T+B and looks for the next input
+        //D+B -> T+B
+        if(!display.binaryOperation){
+            display.temp = display.digits; //In this case digits = current, or current is empty.
+            display.current = '';
+            display.binaryOperation = operation;
         }else{
-            display.digits = `${operation(+display.digits)}`
-            display.clear = true;
+            //T+B1+C+B2 -> B1(T,C)+B2 -> T+B
+            //T+B1+p+C+B2 -> B1(T,p(C))+B2 -> T+B
+            if(display.current.length > 0){
+                display.temp = `${display.binaryOperation(+display.temp,display.unaryOperation(+display.current))}`;
+                display.binaryOperation = operation;
+                display.digits = display.temp;
+                display.current = '';
+            }else{
+                //T+B1+B2 -> B1(T,D)+B2 -> T+B
+                if(display.unaryOperation===equals){
+                    display.temp = `${display.binaryOperation(+display.temp,+display.digits)}`;
+                    display.digits = display.temp;
+                    display.binaryOperation = operation;
+                }else{
+                    //T+B1+p+B2 returns error
+                    display.digits="ERROR";
+                    resetDisplay();
+                }
+            }
         }
-    }if(operation === equals){
-        if(display.binaryOperation){
-            display.digits = `${display.binaryOperation(+display.temp,display.unaryOperation(+display.digits))}`;
+    }
+    if(operation === equals){
+        //C+= -> D
+        //D+= -> D
+        if(!display.binaryOperation){//If there is no binary operation
+            //Show the displayed digits and clear the display at next input
+            resetDisplay();
+        }else{//if there is a binary operation calculate result
+            //T+B+C+= -> B(T,C) -> D
+            //T+B+p+C+= -> B(T,p(C)) -> D
+            if(display.current.length > 0){
+                display.digits = `${operation(display.binaryOperation(+display.temp,display.unaryOperation(+display.current)))}`;
+            }else{
+                //T+B+D+= -> B(T,D) -> D
+                if(display.digits.length > 0){
+                    display.digits = `${operation(display.binaryOperation(+display.temp,display.digits))}`
+                }
+                //T+B+= -> T -> D
+                //T+B+p+= -> p(T) -> D
+                display.digits=`${operation(display.unaryOperation(+display.digits))}`;
+            }
         }
-        display.digits=(operation(display.unaryOperation(+display.digits)));
-        display.binaryOperation = undefined;
-        display.unaryOperation = equals;
-        display.temp = "";
-        display.clear = true;
+        resetDisplay();
     }
     console.log(display);
     showDigits();
 }
 
-// function equals(event){
-//     event.key ? key = event.key : key = event.target.textContent;
-//     if(key )
-// }
 document.addEventListener('keyup',operate);
 const operators = document.querySelectorAll(".operator-key");
 operators.forEach(key => key.addEventListener('click',operate));
