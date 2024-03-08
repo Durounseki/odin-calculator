@@ -116,7 +116,8 @@ window.addEventListener('resize',resizeDisplayText);
 let display = {
     digits: "",
     temp: "",
-    operation: undefined,
+    binaryOperation: undefined,
+    unaryOperation: equals,
     memory: "",
     clear: false,
     position: 0
@@ -164,7 +165,7 @@ function deleteDigit(event){
     if(key === 'AC'){
         display.digits = "";
         display.temp = "";
-        display.operation = undefined;
+        display.binaryOperation = undefined;
         display.clear = false;
     }
     console.log(display);
@@ -236,8 +237,8 @@ function sqrt(num){
     return Math.sqrt(num);
 }
 
-function equals(num1,num2,operation){
-    return operation(num1,num2);
+function equals(num1){
+    return num1;
 }
 
 function plusMinus(num){
@@ -273,27 +274,45 @@ const operations = {
     "%": percent
 }
 
-const instantOperation = [square,sqrt,percent,plusMinus];
+const unaryOperations = [square,sqrt,percent,plusMinus];
+const binaryOperations = [add,subtract,multiply,divide];
 
 
 function operate(event){
     event.key ? key = event.key : key = event.target.textContent;
     let operation = operations[key];
     console.log("key: "+key+" operation: "+ operation);
-    if(operation){
-        if(display.operation){
-            display.digits = `${display.operation(+display.temp,+display.digits)}`;
-            if(operation === equals){
-                display.operation = undefined;
-                display.temp = "";
+    if(binaryOperations.includes(operation)){
+        if(display.binaryOperation){
+            display.digits = `${display.binaryOperation(+display.temp,display.unaryOperation(+display.digits))}`;   
+        }
+        display.binaryOperation = operation;
+        display.unaryOperation = equals;
+        display.temp = display.digits;
+        display.clear = true;
+    }if(unaryOperations.includes(operation)){
+        if(display.binaryOperation || display.digits.length === 0){
+            if(display.unaryOperation === equals){
+                display.unaryOperation = operation;
             }else{
-                display.operation = operation;
-                display.temp = display.digits;
+                display.digits = 'ERROR';
+                display.binaryOperation = undefined;
+                display.unaryOperation = equals;
+                display.temp = "";
+                display.clear = true;
             }
         }else{
-            display.temp = display.digits;
-            display.operation = operation;
+            display.digits = `${operation(+display.digits)}`
+            display.clear = true;
         }
+    }if(operation === equals){
+        if(display.binaryOperation){
+            display.digits = `${display.binaryOperation(+display.temp,display.unaryOperation(+display.digits))}`;
+        }
+        display.digits=(operation(display.unaryOperation(+display.digits)));
+        display.binaryOperation = undefined;
+        display.unaryOperation = equals;
+        display.temp = "";
         display.clear = true;
     }
     console.log(display);
