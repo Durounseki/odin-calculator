@@ -129,23 +129,48 @@ function addDigit(event){
     event.key ? key = event.key : key = event.target.textContent;
     //Only numbers and '.' trigger the event
     if(/[0-9]/.test(key)){//It's a number key
-        if((display.current.length === 0) && key=='0'){
-            if(!display.binaryOperation){
-                display.current += "";
+        if(display.clear){
+            display.digits = "";
+            resetDisplay();
+        }else{
+            if(key=='0'){
+                //Only add '0' when the display is empty and no binary operation
+                //is ongoing
+                if(display.current.length === 0){
+                    if(!display.binaryOperation){
+                        display.current += "";
+                    }else{
+                        display.current += key;
+                        display.digits = display.current;
+                    }
+                }else{
+                    if(display.current === '0'){
+                        display.current += "";
+                    }else{
+                        display.current += key;
+                    }
+                    display.digits = display.current;
+                }
             }else{
-                display.current += key;
+                
+                if(display.digits === '0'){
+                    display.current += "";
+                }else{
+                    display.current += key;
+                }
                 display.digits = display.current;
             }
-            
-            //If no current input do not erase display, this allows the user to input 0.
-            //whenever they try to input a float with integer part 0
-        }else{
-            display.current += key;
-            display.digits = display.current;
+
         }
-    }if((/\./.test(key) || key === "\u22C5") && (display.current.indexOf('.') === -1)){ //Only append one point
-        display.current.length === 0 ? display.current += '0.' : display.current += '.';
-        display.digits=display.current;
+
+    }if(/\./.test(key) || key === "\u22C5"){
+        if(display.clear){
+            display.digits = "";
+            resetDisplay();
+        }else if(display.current.indexOf('.') === -1){ //Only append one point
+            display.current.length === 0 ? display.current += '0.' : display.current += '.';
+            display.digits=display.current;
+        }
     }
     showDigits();
 }
@@ -159,8 +184,17 @@ function deleteDigit(event){
     //Event triggered by a keypress or a click on keypad key
     event.key ? key = event.key : key = event.target.textContent;
     if(key === 'Backspace' || key === "\u232B"){
-        display.digits = display.digits.slice(0, -1);
-        if(display.digits.length > 8){
+        if(display.current.length===0){
+            display.digits="";
+            resetDisplay();
+        }else if(display.digits.length === 1 && prefixingOperations.includes(display.unaryOperation)){
+            display.current="";
+            display.digits = "";
+            display.unaryOperation = equals;
+        }else{
+            display.current = display.current.slice(0,-1);
+            display.digits = display.current;
+            // display.digits = display.digits.slice(0, -1);
         }
     }
     if(key === 'AC'){
@@ -214,6 +248,7 @@ function resetDisplay(){
     display.temp= "";
     display.binaryOperation= undefined;
     display.unaryOperation= equals;
+    display.clear = false;
 }
 
 //Operations
@@ -357,6 +392,7 @@ function operate(event){
                 if(display.current.length > 0 && display.digits !== '0'){
                     display.digits = `${operation(+display.current)}`;
                     display.current = '';
+                    display.clear = true;
                 }else{//T+B+P returns an error
                     display.digits = 'ERROR';
                     resetDisplay();
@@ -390,6 +426,7 @@ function operate(event){
             display.digits = display.temp;
             display.current = '';
             display.binaryOperation = operation;
+            display.unaryOperation = equals;
         }else{
             //T+B1+C+B2 -> B1(T,C)+B2 -> T+B
             //T+B1+p+C+B2 -> B1(T,p(C))+B2 -> T+B

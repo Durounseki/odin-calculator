@@ -31,11 +31,13 @@ Things to do:
 * [x] Division by zero displays 'NAN' instead of 'ERROR'.
 * [ ] &plusmn;`a` displays `a`, instead of &plusmn;`a`.
 * [x] Handle cases in which display is empty but there is a calculation ongoing.
-* [ ] Remove empty display.digits if it only contains '-'.
-* [x] $\sqrt{C}$ or $\% C$ dosen't work.
+* [x] Remove empty display.digits if it only contains '-'.
+* [x] $\sqrt{C}$ or $\% C$ doesn't work.
 * [x] &radic; + &plusmn; `a` + &equals; does not return error.
 * [x] &plusmn; + `a` + &radic; does not return error.
-* [ ] Erase unary when the current is empty and delete key is pressed.
-* [ ] Change delete to AC if `ERROR` is displayed.
+* [x] Erase unary when the current is empty and delete key is pressed.
+* [x] Change delete to AC if `ERROR` is displayed.
 * [x] `a` + &plus; + &plusmn; + &equals; displays `-aa`.
-* [ ] When display shows '0' and next input is a number, reset display.
+* [x] When display shows '0' and next input is a number, only add a dot.
+* [x] When a postfixing operation is evaluated and there is a binary operation ongoing, trying to input a new number removes the current number. I need to change this to reset display and memory.
+* [x] Change delete behavior to remove digit from current instead of digits.
