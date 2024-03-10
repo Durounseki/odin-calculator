@@ -130,7 +130,13 @@ function addDigit(event){
     //Only numbers and '.' trigger the event
     if(/[0-9]/.test(key)){//It's a number key
         if((display.current.length === 0) && key=='0'){
-            display.current += "";
+            if(!display.binaryOperation){
+                display.current += "";
+            }else{
+                display.current += key;
+                display.digits = display.current;
+            }
+            
             //If no current input do not erase display, this allows the user to input 0.
             //whenever they try to input a float with integer part 0
         }else{
@@ -213,19 +219,32 @@ function resetDisplay(){
 //Operations
 //Binary
 function add(num1,num2){
+    if(isNaN(num1) || isNaN(num2)){
+        resetDisplay();
+        return "ERROR"
+    }
     return num1+num2;
 }
 
 function subtract(num1,num2){
+    if(isNaN(num1) || isNaN(num2)){
+        resetDisplay();
+        return "ERROR"
+    }
     return num1-num2;
 }
 
 function multiply(num1,num2){
+    if(isNaN(num1) || isNaN(num2)){
+        resetDisplay();
+        return "ERROR"
+    }
     return num1*num2;
 }
 
 function divide(num1,num2){
-    if(num2 === 0){
+    if(num2 === 0 || (isNaN(num1) || isNaN(num2))){
+        resetDisplay();
         return 'ERROR';
     }
     return num1/num2;
@@ -233,28 +252,45 @@ function divide(num1,num2){
 //Unary
 //Postfixing
 function square(num){
+    if(isNaN(num)){
+        resetDisplay();
+        return "ERROR"
+    }
     return num**2;
 }
 
 function percent(num){
+    if(isNaN(num)){
+        resetDisplay();
+        return "ERROR"
+    }
     return num/100;
 }
 
 //Prefixing
 function sqrt(num){
-    if(num < 0){
+    if(isNaN(num) || num < 0){
+        resetDisplay();
         return "ERROR"
     }
     return Math.sqrt(num);
 }
 
 function plusMinus(num){
+    if(isNaN(num)){
+        resetDisplay();
+        return "ERROR"
+    }
     return -num;
 }
 
 //Equals
-function equals(num1){
-    return num1;
+function equals(num){
+    if(isNaN(num)){
+        resetDisplay();
+        return "ERROR"
+    }
+    return num;
 }
 
 const operations = {
@@ -300,10 +336,20 @@ function operate(event){
     if(unaryOperations.includes(operation)){
         //C+U evaluates to U(C) -> D
         if(!display.binaryOperation){//If no binary operator, check for input and evaluate
-            //Only evaluate if there is an input
+            //Evaluate if there is an input
             if(display.digits.length > 0){
-                display.digits = `${operation(+display.digits)}`;//current could be empty
+                // p+C+U -> U(p(C)) -> D
+                display.digits = `${operation(display.unaryOperation(+display.digits))}`;//current could be empty
                 resetDisplay();
+            }else{//p+C otherwise if p is prefixing, then store p an look for the next input
+                if(display.unaryOperation === equals){
+                    if(prefixingOperations.includes(operation)){
+                        display.unaryOperation = operation;   
+                    }//Do nothing if the operation is postfixing
+                }else{
+                    display.digits = 'ERROR';
+                    resetDisplay();
+                }
             }
             // else{
             //     display.digits = `${operation(+display.digits)}`;
@@ -312,7 +358,7 @@ function operate(event){
         }else{//If there is a binary operation
             if(postfixingOperations.includes(operation)){
                 //T+B+C+P evaluates to T+B+P(C) -> T+B+D
-                if(display.current.length > 0){
+                if(display.current.length > 0 && display.digits !== '0'){
                     display.digits = `${operation(+display.current)}`;
                     display.current = '';
                 }else{//T+B+P returns an error
@@ -340,8 +386,12 @@ function operate(event){
     if(binaryOperations.includes(operation)){//If it is a binary operation
         //C+B -> T+B and looks for the next input
         //D+B -> T+B
+        //p+C+B -> p(C)+B -> T+B
         if(!display.binaryOperation){
-            display.temp = display.digits; //In this case digits = current, or current is empty.
+            //In this case digits = current, or current is empty.
+            //If there is a prefixing unary calculate and display
+            display.temp = `${display.unaryOperation(+display.digits)}`;
+            display.digits = display.temp;
             display.current = '';
             display.binaryOperation = operation;
         }else{
@@ -369,8 +419,10 @@ function operate(event){
     if(operation === equals){
         //C+= -> D
         //D+= -> D
+        //p+C+= -> p(C) -> D
         if(!display.binaryOperation){//If there is no binary operation
             //Show the displayed digits and clear the display at next input
+            display.digits=`${operation(display.unaryOperation(+display.digits))}`
             resetDisplay();
         }else{//if there is a binary operation calculate result
             //T+B+C+= -> B(T,C) -> D
@@ -379,8 +431,9 @@ function operate(event){
                 display.digits = `${operation(display.binaryOperation(+display.temp,display.unaryOperation(+display.current)))}`;
             }else{
                 //T+B+D+= -> B(T,D) -> D
+                //T+B+p+= , T=D -> B(T,p(D)) -> D
                 if(display.digits.length > 0){
-                    display.digits = `${operation(display.binaryOperation(+display.temp,display.digits))}`
+                    display.digits = `${operation(display.binaryOperation(+display.temp,display.unaryOperation(+display.digits)))}`
                 }
                 //T+B+= -> T -> D
                 //T+B+p+= -> p(T) -> D

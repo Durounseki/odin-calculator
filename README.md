@@ -21,13 +21,19 @@ Things to do:
 
 * [x] Remove trailing point on rounded numbers, for example the sequence `10`&radic; &sup2; evaluates to $10.00000$ after truncation and renders as `10.`
 * [ ] There are still cases in which numerical errors lead to imprecisions like `3`&radic; &sup2; evaluates to $3.000001$.
-* [x] Fix evaluation of square operator. The &sup2; operator is a postfixing operator in contrast to the other unary operators. At the moment the sequence `a`&plus; `b` &sup2; &times; `c` evaluates correctly, but the result $(a+b)^2$ doesn't display before typing &times; or other operator.
-* [ ] &sup2;`a` displays `0a`.
+* [x] Fix evaluation of square operator. The &sup2; operator is a postfixing operator in contrast to the other unary operators. At the moment the sequence `a`&plus; `b` &sup2; &times; `c` evaluates correctly, but $b^2$ doesn't display before typing &times; or other operator.
+* [x] &sup2;`a` displays `0a`.
 * [ ] Add memory functionalities.
-* [ ] Change percent operation to unary.
+* [x] Change percent operation to unary.
 * [ ] Separate script into modules.
 * [ ] When `ERROR` is displayed and another operation key is typed, the calculation proceeds. For example, if the operation is unitary, then `NAN` is displayed. This should be fixed to abort any calculation and clear the display.
 * [ ] Division by zero displays 'NAN' instead of 'ERROR'.
 * [ ] &plusmn;`a` displays `a`, instead of &plusmn;`a`.
 * [ ] Handle cases in which display is empty but there is a calculation ongoing.
 * [ ] Remove empty display.digits if it only contains '-'.
+* [x] $\sqrt{C}$ or $\% C$ dosen't work.
+* [x] &radic; + &plusmn; `a` + &equals; does not return error.
+* [x] &plusmn; + `a` + &radic; does not return error.
+* [ ] Erase unary when the current is empty and delete key is pressed.
+* [ ] Change delete to AC if `ERROR` is displayed.
+* [x] `a` + &plus; + &plusmn; + &equals; displays `-aa`.
