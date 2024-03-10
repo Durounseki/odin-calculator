@@ -26,10 +26,11 @@ Things to do:
 * [ ] Add memory functionalities.
 * [x] Change percent operation to unary.
 * [ ] Separate script into modules.
-* [ ] When `ERROR` is displayed and another operation key is typed, the calculation proceeds. For example, if the operation is unitary, then `NAN` is displayed. This should be fixed to abort any calculation and clear the display.
-* [ ] Division by zero displays 'NAN' instead of 'ERROR'.
+* [ ] Write testing module.
+* [x] When `ERROR` is displayed and another operation key is typed, the calculation proceeds. For example, if the operation is unitary, then `NAN` is displayed. This should be fixed to abort any calculation and clear the display.
+* [x] Division by zero displays 'NAN' instead of 'ERROR'.
 * [ ] &plusmn;`a` displays `a`, instead of &plusmn;`a`.
-* [ ] Handle cases in which display is empty but there is a calculation ongoing.
+* [x] Handle cases in which display is empty but there is a calculation ongoing.
 * [ ] Remove empty display.digits if it only contains '-'.
 * [x] $\sqrt{C}$ or $\% C$ dosen't work.
 * [x] &radic; + &plusmn; `a` + &equals; does not return error.
@@ -37,3 +38,4 @@ Things to do:
 * [ ] Erase unary when the current is empty and delete key is pressed.
 * [ ] Change delete to AC if `ERROR` is displayed.
 * [x] `a` + &plus; + &plusmn; + &equals; displays `-aa`.
+* [ ] When display shows '0' and next input is a number, reset display.

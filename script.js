@@ -351,10 +351,6 @@ function operate(event){
                     resetDisplay();
                 }
             }
-            // else{
-            //     display.digits = `${operation(+display.digits)}`;
-            //     resetDisplay();
-            // }
         }else{//If there is a binary operation
             if(postfixingOperations.includes(operation)){
                 //T+B+C+P evaluates to T+B+P(C) -> T+B+D
@@ -434,10 +430,11 @@ function operate(event){
                 //T+B+p+= , T=D -> B(T,p(D)) -> D
                 if(display.digits.length > 0){
                     display.digits = `${operation(display.binaryOperation(+display.temp,display.unaryOperation(+display.digits)))}`
+                }else{
+                    //T+B+= -> T -> D
+                    //T+B+p+= -> p(T) -> D
+                    display.digits=`${operation(display.unaryOperation(+display.temp))}`;
                 }
-                //T+B+= -> T -> D
-                //T+B+p+= -> p(T) -> D
-                display.digits=`${operation(display.unaryOperation(+display.digits))}`;
             }
         }
         resetDisplay();
