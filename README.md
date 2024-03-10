@@ -4,7 +4,11 @@
 
 This is a simple calculator with graphic interface that looks like and old calculator from the 80's. The name of the calculator is a parody of one of the biggest japanese electronics company.
 
-The calculator is programmed to do sequential calculation from left to right. For example the sequence `a` &plus; `b` &times; `c` &equals; , where `a`,`b` and `c` are numbers, evaluates to $(a+b)\times c$, rather than $a+(b\times c)$. I allowed the use of unary operations &plusmn;`a`, `a`&sup2;, &radic;`a`, &percnt;`a`, where the sequences where a sequence `a`&plus;&radic;`b`&equals;, evaluates to $a+\sqrt{b}$. The sequence &plusmn;`a` and so does the sequence &radic; &plusmn; when there is already an input `a`, but it returns and error when there is no input.
+The calculator is programmed to do sequential calculation from left to right. For example the sequence `a` &plus; `b` &times; `c` &equals; , where `a`,`b` and `c` are numbers, evaluates to $(a+b)\times c$, rather than $a+(b\times c)$. I allowed the use of unary operations &plusmn;`a`, `a`&sup2;, &radic;`a`, &percnt;`a`, separating them into prefixing, &plusmn; and &radic;, and postfixing, &percnt; and &sup2;. The evaluation of prefixing operators is done upon input of a binary operation or the 'equals' operator. The evaluation of a postfixing operation is done upon input of that operation.
+
+Since the calculator doesn't use operator precedence, and it includes both type of operators, binary and unary, it is necessary to carefully handle possible different scenarios with unusual input sequences such as 'num1' + 'binary' + 'prefixing' + 'num2' + 'postfixing', which currently evaluates to 'num1' + 'binary' + 'postfixing(prefixing(num2))'.
+
+Currently there is no memory capabilities (store or add to memory `M+`, recall `MR` and clear memory `MC`).
 
 There is keyboard support, with the key map:
 
