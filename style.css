@@ -31,6 +31,7 @@ body{
     padding: 0;
     height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: rgb(25,25,25);
@@ -84,7 +85,6 @@ body{
     background-color: rgb(25,25,25);
     border-radius: 5px;
     margin: 0 4%;
-    /* padding: 1vmin; */
     height: 15vmin;
     min-height: 75px;
     justify-content: center;
@@ -108,7 +108,6 @@ body{
     margin: 2% 2%;
     background-color: rgb(25,25,25);
     border-radius: 2px;
-    /* box-sizing: border-box; */
     padding: 1%;
 }
 
@@ -130,7 +129,6 @@ body{
 
 #numbers-display{
     display: flex;
-    /* justify-content: space-between; */
     gap: 1%;
     align-items: center;
     height: 64%;
@@ -138,9 +136,7 @@ body{
     margin-bottom: 2%;
     border-radius: 2px;
     background-color: rgb(25,25,25);
-    /* box-sizing: border-box; */
     padding: 1%;
-    /* flex: 1; */
 }
 
 .lcd{
@@ -172,7 +168,6 @@ body{
     height: 96%;
     width: 92%;
     display: flex;
-    /* background: gray; */
     flex-direction: column;
     justify-content: space-around;
 }
@@ -192,5 +187,30 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#footer-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2vmin;
+}
+
+#footer{
+    display: flex;
+    justify-content: center;
+    gap: 1vmin;
+    align-items: center;
+    color: rgb(200,200,200);
+}
+
+.icon{
+    height: 2vmin;
+    filter: invert(90%);
+}
+
+a {
+    text-decoration: none;
+    color: rgb(200,200,200);
 }
 

@@ -194,14 +194,12 @@ function deleteDigit(event){
         }else{
             display.current = display.current.slice(0,-1);
             display.digits = display.current;
-            // display.digits = display.digits.slice(0, -1);
         }
     }
     if(key === 'AC' || key === 'c'){
         display.digits = "";
         resetDisplay();
     }
-    console.log(display);
     showDigits();
 }
 
@@ -358,7 +356,6 @@ const postfixingOperations = [square,percent];
 function operate(event){
     event.key ? key = event.key : key = event.target.textContent;
     let operation = operations[key];
-    console.log("key: "+key+" operation: "+ operation);
     //Check typeOf operation
     //B: binary
     //U: unary, post or prefixing
@@ -477,7 +474,6 @@ function operate(event){
         }
         resetDisplay();
     }
-    console.log(display);
     showDigits();
 }
 
@@ -533,13 +529,10 @@ document.addEventListener('keyup',clearMemory);
 //For later use in scientific calculator
 function movePosition(event){
     event.key ? key = event.key : key = event.target.textContent;
-    console.log(key);
     if(key === "ArrowLeft" || key === "\u2190"){
-        console.log("here")
         display.position = Math.min(display.position+1, display.digits.length-numDigits);
     }if(key === "ArrowRight" || key === "\u2192"){
         display.position = Math.max(0,display.position - 1);
     }
-    console.log("position: "+display.position);
     showDigits();
 }
