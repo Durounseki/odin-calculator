@@ -153,7 +153,7 @@ function addDigit(event){
                 }
             }else{
                 
-                if(display.digits === '0'){
+                if(display.current === '0'){
                     display.current += "";
                 }else{
                     display.current += key;
@@ -197,7 +197,7 @@ function deleteDigit(event){
             // display.digits = display.digits.slice(0, -1);
         }
     }
-    if(key === 'AC'){
+    if(key === 'AC' || key === 'c'){
         display.digits = "";
         resetDisplay();
     }
@@ -343,6 +343,7 @@ const operations = {
     "/": divide,
     "\u003D": equals,
     "=": equals,
+    "Enter": equals,
     "\u00B1": plusMinus,
     "±": plusMinus,
     "\u0025": percent,
@@ -483,8 +484,51 @@ function operate(event){
 document.addEventListener('keyup',operate);
 const operators = document.querySelectorAll(".operator-key");
 operators.forEach(key => key.addEventListener('click',operate));
-equalsKey=document.querySelector('#equals');
+const equalsKey=document.querySelector('#equals');
 equalsKey.addEventListener('click',operate);
+
+function addToMemory(event){
+    event.key ? key = event.key : key = event.target.textContent;
+    if(key === 'M\u002B' || key === 'm'){
+        //Only add to memory when a result of an operation is displayed or when no operation is ongoing
+        if(!display.binaryOperation){
+            display.memory = `${add(+display.digits,+display.memory)}`;
+        }else if(display.digits.length > 0 && display.current.length === 0){
+            display.memory = `${add(+display.digits,+display.memory)}`;
+        }
+    }
+}
+function recallMemory(event){
+    event.key ? key = event.key : key = event.target.textContent;
+    if(key === 'MR' || key === 'M'){
+        if(display.clear){
+            display.digits = "";
+            resetDisplay();
+        }else{
+            if(display.current.length > 0){
+                display.current += '';
+            }else{
+                display.current = display.memory;
+            }
+            display.digits = display.current;
+        }
+    }
+    showDigits();
+}
+function clearMemory(event){
+    event.key ? key = event.key : key = event.target.textContent;
+    if(key === 'MC' || key === 'C'){
+        display.memory = "";
+    }
+}
+
+//Memory event listeners
+memKeys[0].addEventListener('click',addToMemory);
+document.addEventListener('keyup',addToMemory);
+memKeys[1].addEventListener('click',recallMemory);
+document.addEventListener('keyup',recallMemory);
+memKeys[2].addEventListener('click',clearMemory);
+document.addEventListener('keyup',clearMemory);
 
 //For later use in scientific calculator
 function movePosition(event){
